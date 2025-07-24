@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>อันดับผู้เล่น</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="lb-body">
+    <h1 class="lb-title">🏆 อันดับผู้เล่น (เรียงตามคะแนนรวม)</h1>
+
+    {% if leaderboard %}
+    <table class="lb-table">
+        <tr>
+            <th>อันดับ</th>
+            <th>ชื่อผู้เล่น</th>
+            <th>คะแนนรวม</th>
+            <th>รายละเอียด</th>
+        </tr>
+        {% for player, total_score, category_scores in leaderboard %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ player }}</td>
+            <td>{{ total_score }}</td>
+            <td>
+                <span class="lb-toggle-btn" onclick="toggleDetails('lb-details-{{ loop.index }}')">🔽 ดูรายละเอียด</span>
+            </td>
+        </tr>
+        <tr id="lb-details-{{ loop.index }}" class="lb-details-row" style="display: none;">
+            <td colspan="4">
+                <ul class="lb-details-list">
+                    {% for category, score in category_scores.items() %}
+                    <li>🏅 หมวด {{ category }}: {{ score }} แต้ม</li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p style="text-align: center;">❌ ยังไม่มีข้อมูลคะแนน</p>
+    {% endif %}
+
+    <!-- ด้านล่างตาราง -->
+<div class="pagination">
+  {% if current_page > 1 %}
+    <a href="{{ url_for('leaderboard', page=current_page - 1) }}">&laquo; ก่อนหน้า</a>
+  {% endif %}
+
+  {% for p in range(1, total_pages + 1) %}
+    {% if p == current_page %}
+      <a class="active">{{ p }}</a>
+    {% else %}
+      <a href="{{ url_for('leaderboard', page=p) }}">{{ p }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if current_page < total_pages %}
+    <a href="{{ url_for('leaderboard', page=current_page + 1) }}">ถัดไป &raquo;</a>
+  {% endif %}
+</div>
+
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('home') }}" class="lb-link">⬅ กลับหน้าแรก</a>
+    </div>
+
+    <script>
+        function toggleDetails(id) {
+            var elem = document.getElementById(id);
+            if (elem.style.display === "none" || elem.style.display === "") {
+                elem.style.display = "table-row";
+            } else {
+                elem.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

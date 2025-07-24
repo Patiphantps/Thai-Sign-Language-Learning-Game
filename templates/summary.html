@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>สรุปผลคะแนน</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+   
+</head>
+<body>
+    <div class="summary-box">
+       <h1>🎉 คุณได้คะแนน {{ score }}/{{ total }}</h1>
+       <a class="home-link" href="{{ url_for('category') }}">กลับหน้าแรก</a>
+
+    </div>
+</body>
+</html>

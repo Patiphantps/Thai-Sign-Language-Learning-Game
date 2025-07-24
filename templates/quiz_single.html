@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ทำแบบทดสอบ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="quiz-page">
+    
+    <div class="quiz-container">
+        👤 ผู้เล่น: {{ session['player_name'] }}
+        <h2>คำที่ต้องทำ: <span class="highlight">{{ word }}</span></h2>
+    <div id="timer" style="font-size: 24px; color: red; margin-bottom: 10px;">
+  <span id="time-display">--:--</span>
+</div>
+
+        <p class="score">คะแนน: {{ score }}/{{ total }}</p>
+        
+        <div class="progress-container">
+
+        <div class="progress-bar" style="width: {{ (count / total) * 100 }}%"></div>
+        
+        </div>
+        <div id="correct-banner" class="correct-banner"> 
+             <span class="checkmark"></span> ถูกต้อง!
+        </div>
+        <audio id="correct-sound" src="{{ url_for('static', filename='correct.mp3') }}"></audio>
+        
+        <div class="video-frame">
+            <img src="{{ url_for('video_feed') }}" width="640" height="480">
+        </div>
+
+       <form action="{{ url_for('next_quiz') }}" method="get" style="text-align: center; margin-top: 20px;">
+    <button type="submit" class="next-btn">ถัดไป</button>
+    <p style="color: gray; font-size: 14px; margin-top: 8px;">
+        ⚠️ <strong>หมายเหตุ:</strong> หากกด “ถัดไป”โดยที่คําที่ทดสอบยังไม่ถูกต้อง ระบบจะ <span style="color: red;">ไม่ให้คะแนน</span> คำนั้น
+    </p>
+</form>
+
+    </div>
+   <script>
+let totalSeconds;
+
+
+// ✅ ใช้เวลาค้างจาก localStorage ถ้ามี
+if (localStorage.getItem('quizTimeLeft')) {
+    totalSeconds = parseInt(localStorage.getItem('quizTimeLeft'));
+} else {
+    totalSeconds = 120; // ถ้าไม่มีข้อมูลเดิม ให้เริ่ม 2 นาที
+}
+
+
+let timerElement = document.getElementById('time-display');
+
+function updateTimer() {
+    let minutes = Math.floor(totalSeconds / 60);
+    let seconds = totalSeconds % 60;
+    timerElement.textContent = `เวลาที่เหลือ: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+    // บันทึกเวลาคงเหลือ
+    localStorage.setItem('quizTimeLeft', totalSeconds);
+
+    if (totalSeconds <= 0) {
+        clearInterval(timerInterval);
+        localStorage.removeItem('quizTimeLeft');
+        alert("หมดเวลา! จะไปสรุปคะแนนแล้วนะ");
+        window.location.href = "/summary";
+    }
+
+    totalSeconds--;
+}
+
+let timerInterval = setInterval(updateTimer, 1000);
+
+// ✅ เมื่อออกจาก quiz หรือไปหน้า summary
+if (window.location.pathname === "/summary" || window.location.pathname === "/") {
+    localStorage.removeItem('quizTimeLeft');
+}
+
+// ✅ แสดง banner ถ้าตอบถูก
+window.onload = function () {
+    {% if correct_answered %}
+    const banner = document.getElementById("correct-banner");
+    banner.classList.add("show");
+    document.getElementById("correct-sound").play();
+    setTimeout(() => {
+        banner.classList.remove("show");
+    }, 1500);
+    {% endif %}
+}
+</script>
+
+    
+        
+      
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ระบบฝึกเรียนรู้ภาษามือไทย</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 20px;">
+    <!-- ปุ่มซ้าย -->
+    <a href="{{ url_for('home') }}" style="position: absolute; left: 0;">
+        <button style="background-color: #3498db; color: white; padding: 8px 12px; border-radius: 8px; border: none; margin-left: 220px">
+            ← กลับหน้าแรก
+        </button>
+    </a>
+
+    <!-- หัวข้อกลาง -->
+    <h2 style="margin: 0;">เกมฝึกภาษามือไทย</h2>
+</div>
+
+
+
+
+<form method="get" action="/category">
+  <label for="category">เลือกหมวด:</label>
+  <div class="select-wrapper">
+    <select name="category" id="category">
+      {% for key in labels.keys() %}
+        <option value="{{ key }}" {% if selected_category == key %}selected{% endif %}>{{ key }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button type="submit">เลือกหมวด</button>
+</form>
+
+
+{% if selected_category %}
+  <div class="card">
+    <h3 class="test-title">🧩 ชุดทดสอบที่ {{ page }}</h3>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 700px; margin: 0 auto 20px auto;">
+      {% if page > 1 %}
+        <a href="?category={{ selected_category }}&page={{ page - 1 }}" class="next-button">⬅ ก่อนหน้า</a>
+      {% else %}
+        <div style="width: 80px;"></div>
+      {% endif %}
+      
+
+      <h3 style="margin: 0; text-align: center;">✋ เลือกคำที่ต้องการเรียนรู้</h3>
+
+      {% if total_pages > 1 and page < total_pages %}
+        <a href="?category={{ selected_category }}&page={{ page + 1 }}" class="next-button">➡ ถัดไป</a>
+      {% else %}
+        <div style="width: 80px;"></div>
+      {% endif %}
+    </div>
+
+    <div class="word-buttons" style="max-width: 700px; margin: 0 auto;">
+      {% for word in words %}
+        <button type="button" onclick="showImage('{{ word }}')">{{ word }}</button>
+
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+    <div class="card" style="margin-top: 30px;">
+        <h3 style="color: #555;">🕹 กรุณาเลือกหมวดหมู่ด้านบนเพื่อเริ่มฝึกเรียนรู้</h3>
+    </div>
+
+    
+{% endif %}
+
+<div id="exercise-placeholder" class="card video-card">
+    <h3 style="text-align: center; color: #555;">⚠ กรุณาเลือกคำด้านบนเพื่อเริ่มฝึกเรียนรู้</h3>
+</div>
+
+{% if selected_category %}
+<div id="exercise-section" class="card video-card" style="display: none;">
+
+  {% if session.get('player_name') %}
+    <div style="text-align: center; margin-bottom: 5px;">
+        👤 ผู้เล่น: <strong>{{ session['player_name'] }}</strong>
+    </div>
+    {% endif %}
+    
+  <!-- ✅ แสดงคำที่เลือก -->
+  <h3 id="selected-word" style="text-align: center; color: #333;"></h3>
+
+
+
+
+   <div style="display: flex; justify-content: center; margin: 10px 0;">
+    <img id="image-viewer" src="" alt="ภาพตัวอย่าง" style="max-width: 100%; border: 2px solid #2ecc71; border-radius: 10px;">
+</div>
+
+
+
+  <form method="post" action="/start_quiz">
+    <input type="hidden" name="category" value="{{ selected_category }}">
+    <input type="hidden" name="page" value="{{ page }}">
+    <button type="submit" class="quiz-button">เริ่มทำแบบทดสอบ</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="floating-top5">
+    <h4>🏆 Top 5 ผู้เล่น</h4>
+    <ol style="padding-left: 20px; margin: 0;">
+        {% for player, total_score in top5_players %}
+        <li>{{ player }} ({{ total_score }} แต้ม)</li>
+        {% endfor %}
+    </ol>
+</div>
+
+<script>
+
+ function showImage(word) {
+    const filename = word + ".png";
+    const src = `/action/${encodeURIComponent(filename)}`;
+    const image = document.getElementById("image-viewer");
+    image.src = src;
+
+    document.getElementById("selected-word").textContent = "✅ คุณเลือกคำว่า: " + word;
+
+    // ซ่อน placeholder, แสดง exercise
+    document.getElementById("exercise-placeholder").style.display = "none";
+    document.getElementById("exercise-section").style.display = "block";
+}
+
+
+
+</script>
+
+<script>
+  localStorage.removeItem('quizTimeLeft');
+</script>
+
+</body>
+</html>

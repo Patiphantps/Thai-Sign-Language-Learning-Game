@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เกมฝึกภาษามือไทย</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="home-body">
+
+    <div class="home-container">
+        <h1>🎮 เกมฝึกภาษามือไทย</h1>
+      {% with messages = get_flashed_messages() %}
+{% if messages %}
+    <ul>
+        <li>{{ messages[-1] }}</li>  <!-- ✅ แสดงเฉพาะข้อความล่าสุด -->
+    </ul>
+{% endif %}
+{% endwith %}
+
+
+        {% if session.get('user_id') %}
+    <p class="welcome-text">ยินดีต้อนรับ, <strong>{{ session['username'] }}</strong>!</p>
+    <div class="button-group">
+        <a href="/leaderboard"><button class="sub-btn">ดูสถิติผู้เล่น</button></a>
+        <form action="/start" method="POST" style="display: inline;">
+            <button type="submit" class="main-btn">เริ่มเล่น</button>
+        </form>
+        <a href="/logout"><button class="sub-btn logout-btn">ออกจากระบบ</button></a>
+    </div>
+{% else %}
+
+    <form action="/set_name" method="POST">
+        <input type="text" name="name" placeholder="กรอกชื่อของคุณ">
+        <button type="submit">เริ่มเล่นแบบ Guest</button>
+    </form>
+    <div style="margin: 10px;">
+        <a href="/login">เข้าสู่ระบบ</a> |
+        <a href="/register">สมัครสมาชิก</a> |
+        <a href="/leaderboard">ดูสถิติผู้เล่น</a>
+    </div>
+{% endif %}
+
+    </div>
+</body>
+</html>

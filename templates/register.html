@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>สมัครสมาชิก</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .flash-messages {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .flash-success {
+            color: green;
+            font-weight: bold;
+        }
+
+        .flash-danger {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="login-body">
+    <div class="register-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <p class="flash-{{ category }}">{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <h1>สมัครสมาชิก</h1>
+        <form method="POST" action="/register">
+            <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
+            <input type="password" name="password" placeholder="รหัสผ่าน" required>
+            <button type="submit">สมัครสมาชิก</button>
+        </form>
+        <p>มีบัญชีแล้ว? <a href="/login">เข้าสู่ระบบ</a></p>
+    </div>
+</body>
+</html>

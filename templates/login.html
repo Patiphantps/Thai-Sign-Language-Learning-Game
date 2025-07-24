@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>เข้าสู่ระบบ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-body">
+
+    <!-- ถ้ามี Flash Messages ให้แสดงเป็น alert ก่อน แล้วฟอร์มยังขึ้นตามปกติ -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <script>
+          {% for msg in messages %}
+            alert("{{ msg }}");
+          {% endfor %}
+        </script>
+      {% endif %}
+    {% endwith %}
+
+    <div class="login-container">
+        <h1>เข้าสู่ระบบ</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+            <input type="text" name="username" placeholder="ชื่อผู้ใช้" required>
+            <input type="password" name="password" placeholder="รหัสผ่าน" required>
+            <button type="submit">เข้าสู่ระบบ</button>
+        </form>
+        <p>ยังไม่มีบัญชี? <a href="{{ url_for('register') }}">สมัครสมาชิก</a></p>
+    </div>
+</body>
+</html>
