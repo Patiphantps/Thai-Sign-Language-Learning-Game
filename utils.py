@@ -12,13 +12,13 @@ def load_models():
     }
 
 def preprocess_image(frame):
-    # ตัดตรงกลาง
+   
     height, width, _ = frame.shape
     x1 = (width - 250) // 2
     y1 = (height - 250) // 2
     cropped = frame[y1:y1+250, x1:x1+250]
 
-    # resize + normalize
+    
     resized = cv2.resize(cropped, (224, 224))
     normalized = resized.astype("float32") / 255.0
     return np.expand_dims(normalized, axis=0)
