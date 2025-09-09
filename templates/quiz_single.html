@@ -58,7 +58,7 @@ function updateTimer() {
     let seconds = totalSeconds % 60;
     timerElement.textContent = `เวลาที่เหลือ: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-    // บันทึกเวลาคงเหลือ
+   
     localStorage.setItem('quizTimeLeft', totalSeconds);
 
     if (totalSeconds <= 0) {
