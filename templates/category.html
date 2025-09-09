@@ -9,14 +9,14 @@
 <body>
 
 <div style="display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 20px;">
-    <!-- ปุ่มซ้าย -->
+    
     <a href="{{ url_for('home') }}" style="position: absolute; left: 0;">
         <button style="background-color: #3498db; color: white; padding: 8px 12px; border-radius: 8px; border: none; margin-left: 220px">
             ← กลับหน้าแรก
         </button>
     </a>
 
-    <!-- หัวข้อกลาง -->
+    
     <h2 style="margin: 0;">เกมฝึกภาษามือไทย</h2>
 </div>
 
@@ -85,7 +85,7 @@
     </div>
     {% endif %}
     
-  <!-- ✅ แสดงคำที่เลือก -->
+  
   <h3 id="selected-word" style="text-align: center; color: #333;"></h3>
 
 
@@ -124,7 +124,7 @@
 
     document.getElementById("selected-word").textContent = "✅ คุณเลือกคำว่า: " + word;
 
-    // ซ่อน placeholder, แสดง exercise
+   
     document.getElementById("exercise-placeholder").style.display = "none";
     document.getElementById("exercise-section").style.display = "block";
 }
