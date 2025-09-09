@@ -43,11 +43,11 @@
 let totalSeconds;
 
 
-// ✅ ใช้เวลาค้างจาก localStorage ถ้ามี
+
 if (localStorage.getItem('quizTimeLeft')) {
     totalSeconds = parseInt(localStorage.getItem('quizTimeLeft'));
 } else {
-    totalSeconds = 120; // ถ้าไม่มีข้อมูลเดิม ให้เริ่ม 2 นาที
+    totalSeconds = 120; 
 }
 
 
@@ -73,12 +73,12 @@ function updateTimer() {
 
 let timerInterval = setInterval(updateTimer, 1000);
 
-// ✅ เมื่อออกจาก quiz หรือไปหน้า summary
+
 if (window.location.pathname === "/summary" || window.location.pathname === "/") {
     localStorage.removeItem('quizTimeLeft');
 }
 
-// ✅ แสดง banner ถ้าตอบถูก
+
 window.onload = function () {
     {% if correct_answered %}
     const banner = document.getElementById("correct-banner");
