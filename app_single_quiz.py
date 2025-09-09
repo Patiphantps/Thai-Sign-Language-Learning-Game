@@ -127,7 +127,7 @@ def serve_video(filename):
 def category():
     selected_category = request.args.get('category')
     page = int(request.args.get('page', 1))  
-    per_page = 4  # จำนวนคำต่อหน้า
+    per_page = 4  
 
     words = labels.get(selected_category, []) if selected_category else []
 
@@ -231,7 +231,7 @@ def start():
         session['player_name'] = session['username']
         return redirect(url_for('category'))
     
-    # ถ้า guest → ใช้ชื่อจากฟอร์ม
+    
     name = request.form.get('name')
     if not name:
         flash("กรุณาใส่ชื่อก่อนเริ่มเล่นแบบ Guest")
@@ -354,7 +354,7 @@ def summary():
             db.session.add(new_score)
 
         db.session.commit()
-        print("✅ บันทึกคะแนนลง database แล้ว!")
+        print(" บันทึกคะแนนลง database แล้ว!")
 
     return render_template("summary.html", score=quiz_state["score"], total=quiz_state["total_words"])
 
@@ -419,11 +419,11 @@ def gen_frames():
         x2 = x1 + frame_width
         y2 = y1 + frame_height
 
-        # วาดกรอบตรวจจับ
+       
         cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
         frame = draw_thai_text(frame, "ยกมือให้อยู่ในกรอบ", (x1 + 10, y1 - 30), font_size=28, color=(0, 255, 255))
 
-        # ตรวจจับนิ่ง
+       
         imgCrop = frame[y1:y2, x1:x2]
         gray_crop = cv2.cvtColor(imgCrop, cv2.COLOR_BGR2GRAY)
 
