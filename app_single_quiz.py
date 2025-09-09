@@ -39,23 +39,7 @@ labels = {
 
 correct_answered = False
 
-# video_mapping = {
-#     "พ่อ": "father",
-#     "แม่": "mother",
-#     "ไป": "go",
-#     "รัก": "love",
-#     "ลูก": "child",
-#     "สวัสดี": "hello",
-#     "พี่":"older_sibling",
-#     "กังวล": "worry",
-#     "กลัว": "afraid",
-#     "เสียใจ": "sad",
-#     "สบายดี": "fine",
-#     "ขอบคุณ": "thank_you",
-#     "ทํางาน":"work",
-#     "ง่วงนอน":"sleepy",
-#     "กิน":"eat",
-# }
+
 
 class Player(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -78,7 +62,7 @@ def save_and_home():
     session['saved_score'] = quiz_state['score']
     session['saved_category'] = quiz_state['category']
     session['saved_count'] = quiz_state['count']
-    # เพิ่มข้อมูลอื่นถ้าต้องการ เช่น session['saved_words'] = quiz_state['words']
+  
     
     return redirect(url_for('home'))
 
@@ -89,7 +73,7 @@ def leaderboard():
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
 
-    # ดึงรายชื่อผู้เล่นทั้งหมด (ไม่รวม guest)
+   
     players = db.session.query(Score.player_name).filter(Score.player_name != 'guest').distinct().all()
     leaderboard_data = []
 
@@ -106,13 +90,13 @@ def leaderboard():
 
         leaderboard_data.append((player_name, total, category_scores))
 
-    # เรียงคะแนนมากไปน้อย
+    
     leaderboard_data.sort(key=lambda x: x[1], reverse=True)
 
     total_players = len(leaderboard_data)
     total_pages = ceil(total_players / per_page)
 
-    # ตัดรายการตามหน้า
+   
     paginated_data = leaderboard_data[start_idx:end_idx]
 
     return render_template(
@@ -135,14 +119,14 @@ def serve_file(filename):
 
 @app.route('/action/video/<path:filename>')
 def serve_video(filename):
-    decoded_filename = urllib.parse.unquote(filename)  # ถอดรหัส URL เช่น ไป%20.mp4
+    decoded_filename = urllib.parse.unquote(filename)  
     return send_from_directory('action', decoded_filename)
 
 
 @app.route('/category')
 def category():
     selected_category = request.args.get('category')
-    page = int(request.args.get('page', 1))  # อ่านหน้าปัจจุบันจาก query string
+    page = int(request.args.get('page', 1))  
     per_page = 4  # จำนวนคำต่อหน้า
 
     words = labels.get(selected_category, []) if selected_category else []
@@ -165,7 +149,7 @@ def category():
     words=paginated_words,
     page=page,
     total_pages=total_pages,
-    top5_players=top5_players  # <=== เพิ่มบรรทัดนี้!
+    top5_players=top5_players 
 )
 
 
@@ -233,7 +217,7 @@ def register():
 @app.route('/logout')
 def logout():
     session.clear()
-    # flash('ออกจากระบบแล้ว', 'info')
+    
     return redirect(url_for('home'))
 
 
@@ -242,7 +226,7 @@ def logout():
 
 @app.route('/start', methods=['POST'])
 def start():
-    # ถ้า login อยู่ → ใช้ session['username']
+    
     if session.get('user_id'):
         session['player_name'] = session['username']
         return redirect(url_for('category'))
@@ -264,9 +248,9 @@ def set_name():
         flash("❗ กรุณากรอกชื่อก่อนเริ่มเล่น")
         return redirect(url_for('home'))
 
-    # บันทึกใน session เท่านั้น (ไม่บันทึกลง DB)
+    
     session['player_name'] = name
-    session['is_guest'] = True  # flag เพิ่ม
+    session['is_guest'] = True  
 
     return redirect(url_for('category'))
 
@@ -276,7 +260,7 @@ def set_name():
 
 @app.route('/start_quiz', methods=["POST"])
 def start_quiz():
-    reset_quiz_state()  # ✅ clear state ก่อนเสมอ
+    reset_quiz_state()  
     
     category = request.form.get("category")
     page = int(request.form.get("page", 1))
@@ -309,7 +293,7 @@ def reset_quiz_state():
         "remaining_words": [],
         "total_words": 0,
         "used_words": set(),
-        "time_left": 120  # ✅ ตั้งเวลาเริ่มต้นเป็น 120 วินาที
+        "time_left": 120  
     }
 
 
@@ -330,7 +314,7 @@ def next_quiz():
 
     word = random.choice(available_words)
     quiz_state["word"] = word
-    quiz_state["used_words"].add(word)  # ✅ เพิ่มคำที่ใช้แล้ว
+    quiz_state["used_words"].add(word)  
     quiz_state["counted"] = False
     correct_answered = False
 
@@ -358,10 +342,10 @@ def summary():
         ).first()
 
         if existing_score:
-            # ✅ ถ้ามีแล้ว → อัปเดตคะแนนเป็นค่าล่าสุด (ไม่บวก)
+            
             existing_score.score = quiz_state["score"]
         else:
-            # ✅ ถ้ายังไม่มี → เพิ่มใหม่
+           
             new_score = Score(
                 player_name=session.get("username"),
                 category=quiz_state["category"],
@@ -419,7 +403,7 @@ def gen_frames():
     predict_wait_sec = 2.5
     difference_threshold = 10
 
-    correct_display_start = None  # เวลาเริ่มแสดง "ถูกต้อง!"
+    correct_display_start = None  
 
     while True:
         ret, frame = camera.read()
@@ -428,7 +412,7 @@ def gen_frames():
 
         imgHeight, imgWidth, _ = frame.shape
         frame_width = 350
-        frame_height = 350  # ปรับความสูงของกรอบได้
+        frame_height = 350  
 
         x1 = int((imgWidth - frame_width) / 2)
         y1 = int((imgHeight - frame_height) / 2)
@@ -478,15 +462,15 @@ def gen_frames():
                         correct_answered = True
                         correct_display_start = time.time()
 
-        # ✅ แสดงผล "ถูกต้อง!" กลางจอ พร้อมกรอบแนวนอน
+        
         if correct_answered and correct_display_start:
             if time.time() - correct_display_start <= 2:
                 overlay = frame.copy()
 
-                # กำหนดกรอบครึ่งกลางจอ (แนวนอน)
+                
                 overlay = frame.copy()
 
-                # กำหนดกรอบครึ่งกลางจอ (แนวนอน)
+               
                 center_box_width = int(imgWidth *  1)
                 center_box_height = int(imgHeight * 0.3)
 
@@ -495,10 +479,10 @@ def gen_frames():
                 center_box_x2 = center_box_x1 + center_box_width
                 center_box_y2 = center_box_y1 + center_box_height
 
-                # วาด overlay สีเขียวเฉพาะกรอบกลางจอ
+               
                 cv2.rectangle(overlay, (center_box_x1, center_box_y1), (center_box_x2, center_box_y2), (0, 255, 0), -1)
 
-                # ผสมโปร่งแสงเฉพาะบริเวณนั้น
+               
                 alpha = 0.3
                 frame[center_box_y1:center_box_y2, center_box_x1:center_box_x2] = cv2.addWeighted(
                     overlay[center_box_y1:center_box_y2, center_box_x1:center_box_x2],
@@ -510,7 +494,7 @@ def gen_frames():
 
 
 
-                text = "✅ ถูกต้อง!"
+                text = " ถูกต้อง!"
                 font_path = 'font/THSarabunNew.ttf'
                 font_size = 50
 
@@ -533,7 +517,7 @@ def gen_frames():
             else:
                 break
 
-        # แสดงผลทำนายปกติ
+      
         if predicted_word:
             frame = draw_thai_text(frame, f'{predicted_word} ({accuracy}%)', (30, 40))
         frame = draw_thai_text(frame, result_text, (30, 80), color=(255, 0, 0))
